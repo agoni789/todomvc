@@ -30,7 +30,7 @@ func InitDB() {
 	if err := ReadConfigFormFile("configs/db.json", &conf); err != nil {
 		panic(err)
 	}
-	DB, err := gorm.Open(mysql.New(mysql.Config{
+	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       conf.DSN, // DSN data source name
 		DefaultStringSize:         256,      // string 类型字段的默认长度
 		DisableDatetimePrecision:  true,     // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
@@ -50,7 +50,7 @@ func InitDB() {
 	}
 
 	// 获取通用数据库对象 sql.DB ，然后使用其提供的功能
-	sqlDB, _ := DB.DB()
+	sqlDB, _ := db.DB()
 
 	// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量。
 	sqlDB.SetMaxIdleConns(10)
@@ -60,5 +60,7 @@ func InitDB() {
 
 	// SetConnMaxLifetime 设置了连接可复用的最大时间。
 	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	DB = db
 
 }
